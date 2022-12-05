@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { makeJsonEncoder } from '@urlpack/json';
 
 import S from './index.module.css';
@@ -33,6 +33,16 @@ export default function Index() {
 }
 
 function Preview({ code }: { code: string }) {
-  const message = { code };
-  return <iframe src={`/preview#${encoder.encode(message)}`} />;
+  const frameRef = useRef<HTMLIFrameElement>(null);
+
+  const message = useMemo(() => encoder.encode({ code }), [code]);
+
+  useEffect(() => {
+    frameRef.current?.contentWindow?.postMessage({
+      type: 'preview',
+      message,
+    });
+  }, [message]);
+
+  return <iframe ref={frameRef} src={`/preview#${message}`} />;
 }

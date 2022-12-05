@@ -35,6 +35,25 @@ export default function Preview() {
       .finally(() => setLoading(false));
   }, [code]);
 
+  React.useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (
+        window.location.origin === event.origin &&
+        event.data.type === 'preview'
+      ) {
+        const encoded = event.data.message;
+        const decoded = decoder.decode(encoded) as any;
+        setCode(decoded.code);
+      }
+    }
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
   return (
     <>
       {error}
