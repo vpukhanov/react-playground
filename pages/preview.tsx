@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeJsonDecoder } from '@urlpack/json';
 import { executeCode } from '../lib/code-utils';
+import S from './preview.module.css';
 
 const decoder = makeJsonDecoder();
 
@@ -35,7 +36,7 @@ export default function Preview() {
       .finally(() => setLoading(false));
   }, [code]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (
         window.location.origin === event.origin &&
@@ -55,9 +56,9 @@ export default function Preview() {
   }, []);
 
   return (
-    <>
+    <div className={S.root}>
       {error}
       {loading ? 'Loading preview...' : preview}
-    </>
+    </div>
   );
 }
