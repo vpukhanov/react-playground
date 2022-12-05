@@ -1,32 +1,50 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { makeJsonEncoder } from '@urlpack/json';
+import Editor, { useMonaco } from '@monaco-editor/react';
 
 import S from './index.module.css';
 
 const encoder = makeJsonEncoder();
 
 const initialCodeString = `
-import React from 'react'
+import React from 'react';
 
 export default function App() {
- return (
-   <div>
-     <h1>Hello Playground</h1>
-     <h2>Start editing to see some magic happen!</h2>
-   </div>
- )
+  return (
+    <div>
+      <h1>Hello Playground</h1>
+      <h2>Start editing to see some magic happen!</h2>
+    </div>
+  );
 }
 `.trim();
 
 export default function Index() {
   const [code, setCode] = useState(initialCodeString);
+  const monaco = useMonaco();
 
-  const onCodeChange = (ev: ChangeEvent<HTMLTextAreaElement>) =>
-    setCode(ev.target.value);
+  const onCodeChange = (value: string | undefined) => setCode(value ?? '');
+
+  useEffect(() => {
+    if (!monaco) {
+      return;
+    }
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      jsx: monaco.languages.typescript.JsxEmit.React,
+    });
+  }, [monaco]);
 
   return (
     <div className={S.grid}>
-      <textarea value={code} spellCheck={false} onChange={onCodeChange} />
+      <Editor
+        value={code}
+        onChange={onCodeChange}
+        defaultLanguage='javascript'
+        defaultPath='index.jsx'
+        options={{
+          minimap: { enabled: false },
+        }}
+      />
       <Preview code={code} />
     </div>
   );
@@ -44,5 +62,7 @@ function Preview({ code }: { code: string }) {
     });
   }, [message]);
 
-  return <iframe ref={frameRef} src={`/preview#${message}`} className={S.iframe} />;
+  return (
+    <iframe ref={frameRef} src={`/preview#${message}`} className={S.iframe} />
+  );
 }
