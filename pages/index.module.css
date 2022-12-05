@@ -9,3 +9,9 @@
   width: 100%;
   height: 100%;
 }
+
+.share {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+}

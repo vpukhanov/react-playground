@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { makeJsonEncoder } from '@urlpack/json';
+import { makeJsonEncoder, makeJsonDecoder } from '@urlpack/json';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import Head from 'next/head';
 
 import S from './index.module.css';
 
 const encoder = makeJsonEncoder();
+const decoder = makeJsonDecoder();
 
 const initialCodeString = `
 import React from 'react';
@@ -26,6 +27,13 @@ export default function Index() {
 
   const onCodeChange = (value: string | undefined) => setCode(value ?? '');
 
+  const onShareUrl = () => {
+    const message = encoder.encode({ code });
+    const shareUrl = window.location.href.replace(/#.*/, '') + '#' + message;
+    navigator.clipboard.writeText(shareUrl);
+    window.location.href = shareUrl;
+  };
+
   useEffect(() => {
     if (!monaco) {
       return;
@@ -34,6 +42,14 @@ export default function Index() {
       jsx: monaco.languages.typescript.JsxEmit.React,
     });
   }, [monaco]);
+
+  useEffect(() => {
+    if (window.location.hash) {
+      const encoded = window.location.hash.slice(1);
+      const decoded = decoder.decode(encoded) as any;
+      setCode(decoded.code);
+    }
+  }, []);
 
   return (
     <div className={S.grid}>
@@ -53,6 +69,9 @@ export default function Index() {
         }}
       />
       <Preview code={code} />
+      <button className={S.share} onClick={onShareUrl}>
+        Copy Playground URL
+      </button>
     </div>
   );
 }
