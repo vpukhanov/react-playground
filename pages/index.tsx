@@ -1,5 +1,9 @@
 import { ChangeEvent, useState } from 'react';
+import { makeJsonEncoder } from '@urlpack/json';
+
 import S from './index.module.css';
+
+const encoder = makeJsonEncoder();
 
 const initialCodeString = `
 import React from 'react'
@@ -23,11 +27,12 @@ export default function Index() {
   return (
     <div className={S.grid}>
       <textarea value={code} spellCheck={false} onChange={onCodeChange} />
-      <Preview />
+      <Preview code={code} />
     </div>
   );
 }
 
-function Preview() {
-  return <iframe src='/preview' />;
+function Preview({ code }: { code: string }) {
+  const message = { code };
+  return <iframe src={`/preview#${encoder.encode(message)}`} />;
 }
