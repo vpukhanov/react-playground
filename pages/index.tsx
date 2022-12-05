@@ -41,8 +41,11 @@ export default function Index() {
         onChange={onCodeChange}
         defaultLanguage='javascript'
         defaultPath='index.jsx'
+        theme='vs-dark'
         options={{
           minimap: { enabled: false },
+          lineNumbers: 'off',
+          padding: { top: 16 },
         }}
       />
       <Preview code={code} />
