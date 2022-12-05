@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { makeJsonEncoder } from '@urlpack/json';
 import Editor, { useMonaco } from '@monaco-editor/react';
+import Head from 'next/head';
 
 import S from './index.module.css';
 
@@ -36,6 +37,9 @@ export default function Index() {
 
   return (
     <div className={S.grid}>
+      <Head>
+        <title>React Playground</title>
+      </Head>
       <Editor
         value={code}
         onChange={onCodeChange}
