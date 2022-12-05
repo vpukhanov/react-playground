@@ -44,5 +44,5 @@ function Preview({ code }: { code: string }) {
     });
   }, [message]);
 
-  return <iframe ref={frameRef} src={`/preview#${message}`} />;
+  return <iframe ref={frameRef} src={`/preview#${message}`} className={S.iframe} />;
 }
